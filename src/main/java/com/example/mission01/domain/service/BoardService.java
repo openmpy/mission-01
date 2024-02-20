@@ -3,12 +3,16 @@ package com.example.mission01.domain.service;
 import com.example.mission01.domain.dto.*;
 import com.example.mission01.domain.entity.Board;
 import com.example.mission01.domain.repository.BoardRepository;
+import com.example.mission01.global.handler.exception.CustomBoardException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.example.mission01.global.handler.exception.ErrorCode.INVALID_BOARD_ID;
+import static com.example.mission01.global.handler.exception.ErrorCode.WRONG_BOARD_PASSWORD;
 
 @RequiredArgsConstructor
 @Transactional
@@ -17,47 +21,47 @@ public class BoardService {
 
     private final BoardRepository boardRepository;
 
-    public BoardWriteResponseDto write(BoardWriteRequestDto requestDto) {
+    public WriteBoardResponseDto write(WriteBoardRequestDto requestDto) {
         Board board = boardRepository.save(requestDto.toEntity());
-        return BoardWriteResponseDto.fromEntity(board);
+        return WriteBoardResponseDto.fromEntity(board);
     }
 
     @Transactional(readOnly = true)
-    public BoardReadResponseDto read(Long id) {
+    public ReadBoardResponseDto read(Long id) {
         Board board = boardRepository.findById(id).orElseThrow(() ->
-                new RuntimeException("찾을 수 없는 게시글 번호입니다.")
+                new CustomBoardException(INVALID_BOARD_ID.getMessage())
         );
 
-        return BoardReadResponseDto.fromEntity(board);
+        return ReadBoardResponseDto.fromEntity(board);
     }
 
     @Transactional(readOnly = true)
-    public List<BoardReadResponseDto> readList() {
+    public List<ReadBoardResponseDto> readList() {
         List<Board> boardList = boardRepository.findAllByOrderByCreatedAtDesc();
 
-        List<BoardReadResponseDto> responseDtoList = new ArrayList<>();
-        boardList.forEach(board -> responseDtoList.add(BoardReadResponseDto.fromEntity(board)));
+        List<ReadBoardResponseDto> responseDtoList = new ArrayList<>();
+        boardList.forEach(board -> responseDtoList.add(ReadBoardResponseDto.fromEntity(board)));
         return responseDtoList;
     }
 
-    public BoardEditResponseDto edit(Long id, BoardEditRequestDto requestDto) {
+    public EditBoardResponseDto edit(Long id, EditBoardRequestDto requestDto) {
         Board board = boardRepository.findById(id).orElseThrow(() ->
-                new RuntimeException("찾을 수 없는 게시글 번호입니다.")
+                new CustomBoardException(INVALID_BOARD_ID.getMessage())
         );
         if (!board.getPassword().equals(requestDto.getPassword())) {
-            throw new RuntimeException("게시글의 비밀번호와 일치하지 않습니다.");
+            throw new CustomBoardException(WRONG_BOARD_PASSWORD.getMessage());
         }
 
         board.update(requestDto.getTitle(), requestDto.getWriter(), requestDto.getContents());
-        return BoardEditResponseDto.fromEntity(board);
+        return EditBoardResponseDto.fromEntity(board);
     }
 
     public long delete(Long id, String password) {
         Board board = boardRepository.findById(id).orElseThrow(() ->
-                new RuntimeException("찾을 수 없는 게시글 번호입니다.")
+                new CustomBoardException(INVALID_BOARD_ID.getMessage())
         );
         if (!board.getPassword().equals(password)) {
-            throw new RuntimeException("게시글의 비밀번호와 일치하지 않습니다.");
+            throw new CustomBoardException(WRONG_BOARD_PASSWORD.getMessage());
         }
 
         boardRepository.deleteById(id);

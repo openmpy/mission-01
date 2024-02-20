@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class BoardEditRequestDto {
+public class EditBoardRequestDto {
 
     private String title;
     private String writer;

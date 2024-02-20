@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 @Getter
-public class BoardEditResponseDto {
+public class EditBoardResponseDto {
 
     private Long id;
     private String title;
@@ -23,8 +23,8 @@ public class BoardEditResponseDto {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
 
-    public static BoardEditResponseDto fromEntity(Board board) {
-        return BoardEditResponseDto.builder()
+    public static EditBoardResponseDto fromEntity(Board board) {
+        return EditBoardResponseDto.builder()
                 .id(board.getId())
                 .title(board.getTitle())
                 .writer(board.getWriter())

@@ -146,4 +146,40 @@ class BoardServiceTest {
         // when & then
         Assertions.assertThrows(RuntimeException.class, () -> boardService.edit(board.getId(), requestDto));
     }
+
+    @Test
+    @DisplayName("게시글을 삭제한다.")
+    void delete_01() throws Exception {
+        // given
+        Board board = Board.builder()
+                .id(1L)
+                .title("제목")
+                .contents("내용")
+                .password("1234")
+                .build();
+
+        // stub
+        when(boardRepository.findById(anyLong())).thenReturn(Optional.of(board));
+
+        // when
+        long responseId = boardService.delete(board.getId(), board.getPassword());
+
+        // then
+        Assertions.assertEquals(1L, responseId);
+    }
+
+    @Test
+    @DisplayName("실패 - 비밀번호가 일치하지 않아 게시글을 삭제하지 못한다.")
+    void delete_02() throws Exception {
+        // given
+        Board board = Board.builder()
+                .id(1L)
+                .title("제목")
+                .contents("내용")
+                .password("1234")
+                .build();
+
+        // when & then
+        Assertions.assertThrows(RuntimeException.class, () -> boardService.delete(board.getId(), "12345"));
+    }
 }

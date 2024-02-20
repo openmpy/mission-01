@@ -51,4 +51,16 @@ public class BoardService {
         board.update(requestDto.getTitle(), requestDto.getWriter(), requestDto.getContents());
         return BoardEditResponseDto.fromEntity(board);
     }
+
+    public long delete(Long id, String password) {
+        Board board = boardRepository.findById(id).orElseThrow(() ->
+                new RuntimeException("찾을 수 없는 게시글 번호입니다.")
+        );
+        if (!board.getPassword().equals(password)) {
+            throw new RuntimeException("게시글의 비밀번호와 일치하지 않습니다.");
+        }
+
+        boardRepository.deleteById(id);
+        return id;
+    }
 }

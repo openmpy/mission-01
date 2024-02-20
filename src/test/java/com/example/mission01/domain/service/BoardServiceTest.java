@@ -13,7 +13,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.LongStream;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -74,5 +77,33 @@ class BoardServiceTest {
     void read_02() throws Exception {
         // when & then
         Assertions.assertThrows(RuntimeException.class, () -> boardService.read(1L));
+    }
+
+    @Test
+    @DisplayName("게시글 목록을 조회한다.")
+    void readList_01() throws Exception {
+        // given
+        List<Board> boardList = new ArrayList<>();
+
+        LongStream.range(0, 10).forEach(i -> {
+            Board board = Board.builder()
+                    .id(i)
+                    .title("제목 " + i)
+                    .contents("내용 " + i)
+                    .password("1234")
+                    .build();
+
+            boardList.add(board);
+        });
+
+        // stub
+        when(boardRepository.findAllByOrderByCreatedAtDesc()).thenReturn(boardList);
+
+        // when
+        List<BoardReadResponseDto> responseDtoList = boardService.readList();
+
+        // then
+        Assertions.assertEquals(10, responseDtoList.size());
+        Assertions.assertEquals("제목 9", responseDtoList.get(9).getTitle());
     }
 }

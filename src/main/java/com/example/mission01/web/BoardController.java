@@ -1,8 +1,6 @@
 package com.example.mission01.web;
 
-import com.example.mission01.domain.dto.BoardReadResponseDto;
-import com.example.mission01.domain.dto.BoardWriteRequestDto;
-import com.example.mission01.domain.dto.BoardWriteResponseDto;
+import com.example.mission01.domain.dto.*;
 import com.example.mission01.domain.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -34,5 +32,11 @@ public class BoardController {
     public ResponseEntity<?> readBoardList() {
         List<BoardReadResponseDto> responseDtoList = boardService.readList();
         return ResponseEntity.ok().body(responseDtoList);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> editBoard(@PathVariable Long id, @RequestBody BoardEditRequestDto requestDto) {
+        BoardEditResponseDto responseDto = boardService.edit(id, requestDto);
+        return ResponseEntity.ok().body(responseDto);
     }
 }

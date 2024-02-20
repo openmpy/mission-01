@@ -1,8 +1,6 @@
 package com.example.mission01.domain.service;
 
-import com.example.mission01.domain.dto.BoardReadResponseDto;
-import com.example.mission01.domain.dto.BoardWriteRequestDto;
-import com.example.mission01.domain.dto.BoardWriteResponseDto;
+import com.example.mission01.domain.dto.*;
 import com.example.mission01.domain.entity.Board;
 import com.example.mission01.domain.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
@@ -40,5 +38,17 @@ public class BoardService {
         List<BoardReadResponseDto> responseDtoList = new ArrayList<>();
         boardList.forEach(board -> responseDtoList.add(BoardReadResponseDto.fromEntity(board)));
         return responseDtoList;
+    }
+
+    public BoardEditResponseDto edit(Long id, BoardEditRequestDto requestDto) {
+        Board board = boardRepository.findById(id).orElseThrow(() ->
+                new RuntimeException("찾을 수 없는 게시글 번호입니다.")
+        );
+        if (!board.getPassword().equals(requestDto.getPassword())) {
+            throw new RuntimeException("게시글의 비밀번호와 일치하지 않습니다.");
+        }
+
+        board.update(requestDto.getTitle(), requestDto.getWriter(), requestDto.getContents());
+        return BoardEditResponseDto.fromEntity(board);
     }
 }

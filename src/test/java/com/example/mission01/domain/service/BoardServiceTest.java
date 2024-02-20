@@ -1,8 +1,6 @@
 package com.example.mission01.domain.service;
 
-import com.example.mission01.domain.dto.BoardReadResponseDto;
-import com.example.mission01.domain.dto.BoardWriteRequestDto;
-import com.example.mission01.domain.dto.BoardWriteResponseDto;
+import com.example.mission01.domain.dto.*;
 import com.example.mission01.domain.entity.Board;
 import com.example.mission01.domain.repository.BoardRepository;
 import org.junit.jupiter.api.Assertions;
@@ -105,5 +103,47 @@ class BoardServiceTest {
         // then
         Assertions.assertEquals(10, responseDtoList.size());
         Assertions.assertEquals("제목 9", responseDtoList.get(9).getTitle());
+    }
+
+    @Test
+    @DisplayName("게시글을 수정한다.")
+    void edit_01() throws Exception {
+        // given
+        Board board = Board.builder()
+                .id(1L)
+                .title("제목")
+                .contents("내용")
+                .password("1234")
+                .build();
+
+        BoardEditRequestDto requestDto = new BoardEditRequestDto("제목2", "손흥민", "내용2", "1234");
+
+        // stub
+        when(boardRepository.findById(anyLong())).thenReturn(Optional.of(board));
+
+        // when
+        BoardEditResponseDto responseDto = boardService.edit(board.getId(), requestDto);
+
+        // then
+        Assertions.assertEquals("제목2", responseDto.getTitle());
+        Assertions.assertEquals("손흥민", responseDto.getWriter());
+        Assertions.assertEquals("내용2", responseDto.getContents());
+    }
+
+    @Test
+    @DisplayName("실패 - 비밀번호가 일치하지 않아 게시글을 수정하지 못한다.")
+    void edit_02() throws Exception {
+        // given
+        Board board = Board.builder()
+                .id(1L)
+                .title("제목")
+                .contents("내용")
+                .password("1234")
+                .build();
+
+        BoardEditRequestDto requestDto = new BoardEditRequestDto("제목2", "손흥민", "내용2", "12345");
+
+        // when & then
+        Assertions.assertThrows(RuntimeException.class, () -> boardService.edit(board.getId(), requestDto));
     }
 }

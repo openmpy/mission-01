@@ -3,6 +3,7 @@ package com.example.mission01.domain.service;
 import com.example.mission01.domain.dto.*;
 import com.example.mission01.domain.entity.Board;
 import com.example.mission01.domain.repository.BoardRepository;
+import com.example.mission01.global.handler.exception.CustomBoardException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.LongStream;
 
+import static com.example.mission01.global.handler.exception.ErrorCode.INVALID_BOARD_ID;
+import static com.example.mission01.global.handler.exception.ErrorCode.WRONG_BOARD_PASSWORD;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
@@ -33,13 +36,13 @@ class BoardServiceTest {
     @DisplayName("게시글을 작성한다.")
     void write_01() throws Exception {
         // given
-        BoardWriteRequestDto requestDto = new BoardWriteRequestDto("제목", "홍길동", "1234", "내용");
+        WriteBoardRequestDto requestDto = new WriteBoardRequestDto("제목", "홍길동", "1234", "내용");
 
         // stub
         when(boardRepository.save(any())).thenReturn(requestDto.toEntity());
 
         // when
-        BoardWriteResponseDto responseDto = boardService.write(requestDto);
+        WriteBoardResponseDto responseDto = boardService.write(requestDto);
 
         // then
         Assertions.assertEquals("제목", responseDto.getTitle());
@@ -62,7 +65,7 @@ class BoardServiceTest {
         when(boardRepository.findById(anyLong())).thenReturn(Optional.of(board));
 
         // when
-        BoardReadResponseDto responseDto = boardService.read(board.getId());
+        ReadBoardResponseDto responseDto = boardService.read(board.getId());
 
         // then
         Assertions.assertEquals(1, responseDto.getId());
@@ -74,7 +77,9 @@ class BoardServiceTest {
     @DisplayName("실패 - 찾을 수 없는 게시글을 조회한다.")
     void read_02() throws Exception {
         // when & then
-        Assertions.assertThrows(RuntimeException.class, () -> boardService.read(1L));
+        CustomBoardException exception = Assertions.assertThrows(CustomBoardException.class, () ->
+                boardService.read(1L));
+        Assertions.assertEquals(exception.getMessage(), INVALID_BOARD_ID.getMessage());
     }
 
     @Test
@@ -98,7 +103,7 @@ class BoardServiceTest {
         when(boardRepository.findAllByOrderByCreatedAtDesc()).thenReturn(boardList);
 
         // when
-        List<BoardReadResponseDto> responseDtoList = boardService.readList();
+        List<ReadBoardResponseDto> responseDtoList = boardService.readList();
 
         // then
         Assertions.assertEquals(10, responseDtoList.size());
@@ -116,13 +121,13 @@ class BoardServiceTest {
                 .password("1234")
                 .build();
 
-        BoardEditRequestDto requestDto = new BoardEditRequestDto("제목2", "손흥민", "내용2", "1234");
+        EditBoardRequestDto requestDto = new EditBoardRequestDto("제목2", "손흥민", "내용2", "1234");
 
         // stub
         when(boardRepository.findById(anyLong())).thenReturn(Optional.of(board));
 
         // when
-        BoardEditResponseDto responseDto = boardService.edit(board.getId(), requestDto);
+        EditBoardResponseDto responseDto = boardService.edit(board.getId(), requestDto);
 
         // then
         Assertions.assertEquals("제목2", responseDto.getTitle());
@@ -141,10 +146,15 @@ class BoardServiceTest {
                 .password("1234")
                 .build();
 
-        BoardEditRequestDto requestDto = new BoardEditRequestDto("제목2", "손흥민", "내용2", "12345");
+        EditBoardRequestDto requestDto = new EditBoardRequestDto("제목2", "손흥민", "내용2", "12345");
+
+        // stub
+        when(boardRepository.findById(anyLong())).thenReturn(Optional.of(board));
 
         // when & then
-        Assertions.assertThrows(RuntimeException.class, () -> boardService.edit(board.getId(), requestDto));
+        CustomBoardException exception = Assertions.assertThrows(CustomBoardException.class, () ->
+                boardService.edit(board.getId(), requestDto));
+        Assertions.assertEquals(exception.getMessage(), WRONG_BOARD_PASSWORD.getMessage());
     }
 
     @Test
@@ -179,7 +189,12 @@ class BoardServiceTest {
                 .password("1234")
                 .build();
 
+        // stub
+        when(boardRepository.findById(anyLong())).thenReturn(Optional.of(board));
+
         // when & then
-        Assertions.assertThrows(RuntimeException.class, () -> boardService.delete(board.getId(), "12345"));
+        CustomBoardException exception = Assertions.assertThrows(CustomBoardException.class, () ->
+                boardService.delete(board.getId(), "12345"));
+        Assertions.assertEquals(exception.getMessage(), WRONG_BOARD_PASSWORD.getMessage());
     }
 }

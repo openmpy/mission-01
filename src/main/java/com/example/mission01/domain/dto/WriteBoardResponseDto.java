@@ -13,9 +13,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 @Getter
-public class BoardReadResponseDto {
+public class WriteBoardResponseDto {
 
-    private Long id;
     private String title;
     private String writer;
     private String contents;
@@ -23,9 +22,8 @@ public class BoardReadResponseDto {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
 
-    public static BoardReadResponseDto fromEntity(Board board) {
-        return BoardReadResponseDto.builder()
-                .id(board.getId())
+    public static WriteBoardResponseDto fromEntity(Board board) {
+        return WriteBoardResponseDto.builder()
                 .title(board.getTitle())
                 .writer(board.getWriter())
                 .contents(board.getContents())

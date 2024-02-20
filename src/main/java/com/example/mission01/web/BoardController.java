@@ -39,4 +39,10 @@ public class BoardController {
         BoardEditResponseDto responseDto = boardService.edit(id, requestDto);
         return ResponseEntity.ok().body(responseDto);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteBoard(@PathVariable Long id, @RequestParam("password") String password) {
+        long response = boardService.delete(id, password);
+        return ResponseEntity.ok().body(response);
+    }
 }

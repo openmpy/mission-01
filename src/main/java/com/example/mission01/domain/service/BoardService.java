@@ -9,6 +9,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RequiredArgsConstructor
 @Transactional
 @Service
@@ -28,5 +31,14 @@ public class BoardService {
         );
 
         return BoardReadResponseDto.fromEntity(board);
+    }
+
+    @Transactional(readOnly = true)
+    public List<BoardReadResponseDto> readList() {
+        List<Board> boardList = boardRepository.findAllByOrderByCreatedAtDesc();
+
+        List<BoardReadResponseDto> responseDtoList = new ArrayList<>();
+        boardList.forEach(board -> responseDtoList.add(BoardReadResponseDto.fromEntity(board)));
+        return responseDtoList;
     }
 }

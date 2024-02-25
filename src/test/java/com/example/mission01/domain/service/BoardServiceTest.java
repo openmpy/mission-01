@@ -1,6 +1,10 @@
 package com.example.mission01.domain.service;
 
-import com.example.mission01.domain.dto.*;
+import com.example.mission01.domain.dto.BoardRequestDto.EditBoardRequestDto;
+import com.example.mission01.domain.dto.BoardRequestDto.WriteBoardRequestDto;
+import com.example.mission01.domain.dto.BoardResponseDto.EditBoardResponseDto;
+import com.example.mission01.domain.dto.BoardResponseDto.ReadBoardResponseDto;
+import com.example.mission01.domain.dto.BoardResponseDto.WriteBoardResponseDto;
 import com.example.mission01.domain.entity.Board;
 import com.example.mission01.domain.repository.BoardRepository;
 import com.example.mission01.global.handler.exception.CustomBoardException;

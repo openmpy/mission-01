@@ -36,27 +36,6 @@
 - Spring Boot Validation
 - H2
 
-## 📖 application-dev.yml
-
-```yml
-spring:
-  datasource:
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:test;MODE=MySQL
-    username: sa
-    password:
-  h2:
-    console:
-      enabled: true
-  jpa:
-    hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        format_sql: true
-    show-sql: true
-```
-
 ## 🖼️ Use Case Diagram
 
 <img src="https://github.com/openmpy/mission-01/assets/150704638/2c271b9e-fed7-4c4c-8f31-1e48eadefa81" width=500 height=800>

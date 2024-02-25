@@ -1,6 +1,10 @@
 package com.example.mission01.web;
 
-import com.example.mission01.domain.dto.*;
+import com.example.mission01.domain.dto.BoardRequestDto.EditBoardRequestDto;
+import com.example.mission01.domain.dto.BoardRequestDto.WriteBoardRequestDto;
+import com.example.mission01.domain.dto.BoardResponseDto.EditBoardResponseDto;
+import com.example.mission01.domain.dto.BoardResponseDto.ReadBoardResponseDto;
+import com.example.mission01.domain.dto.BoardResponseDto.WriteBoardResponseDto;
 import com.example.mission01.domain.service.BoardService;
 import com.example.mission01.global.dto.ResponseDto;
 import jakarta.validation.Valid;
